@@ -20,6 +20,7 @@
 ********************************************************************************************/
 
 #include "raylib.h"
+// #include "pixelGame.h"
 
 int main() 
 {
@@ -28,7 +29,16 @@ int main()
     const int screenWidth = 800;
     const int screenHeight = 450;
 
+    const int virtualScreenWidth = 160;
+    const int virtualScreenHeight = 90;
+
+    const float virtualRatio = (float)screenWidth / (float)virtualScreenWidth;
+
     InitWindow(screenWidth, screenHeight, "raylib");
+
+    Image windowIcon = LoadImage("ICON.png");
+
+    SetWindowIcon(windowIcon);
 
     Camera camera = { 0 };
     camera.position = (Vector3){ 10.0f, 10.0f, 8.0f };
@@ -44,6 +54,13 @@ int main()
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
+    RenderTexture2D target = LoadRenderTexture(virtualScreenWidth, virtualScreenHeight);
+
+    Rectangle sourceRec = { 0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height };
+    Rectangle destRec = { -virtualRatio, -virtualRatio, screenWidth + (virtualRatio*2), screenHeight + (virtualRatio*2) };
+
+    Vector2 origin = {0.0f, 0.0f};
+    
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -52,10 +69,7 @@ int main()
         UpdateCamera(&camera);
         //----------------------------------------------------------------------------------
 
-        // Draw
-        //----------------------------------------------------------------------------------
-        BeginDrawing();
-
+        BeginTextureMode(target);
             ClearBackground(RAYWHITE);
 
             BeginMode3D(camera);
@@ -66,9 +80,19 @@ int main()
 
             EndMode3D();
 
-            DrawText("This is a raylib example", 10, 40, 20, DARKGRAY);
+        EndTextureMode();
 
-            DrawFPS(10, 10);
+        // Draw
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+
+            ClearBackground(RAYWHITE);
+
+            DrawTexturePro(target.texture, sourceRec, destRec, origin, 0.0f, WHITE);
+
+                DrawText("This is a raylib example", 10, 40, 20, DARKGRAY);
+
+                DrawFPS(10, 10);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
