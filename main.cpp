@@ -14,6 +14,7 @@ private:
     Rectangle m_source;
     Rectangle m_destination;
     Vector2 m_origin;
+    int m_ratio;
 
 public:
     OutputTexture(int x, int y)
@@ -28,7 +29,8 @@ public:
 
     void updateSize()
     {
-
+        UnloadRenderTexture(m_texture);
+        m_texture = LoadRenderTexture(5, 5);
     }
 };
 
