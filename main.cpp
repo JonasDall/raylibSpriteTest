@@ -11,11 +11,24 @@ class OutputTexture
 {
 private:
     RenderTexture2D m_texture;
+    Rectangle m_source;
+    Rectangle m_destination;
+    Vector2 m_origin;
 
 public:
-    OutputTexture()
+    OutputTexture(int x, int y)
     {
-        
+        m_texture = LoadRenderTexture(x, y);
+    }
+
+    void draw()
+    {
+        DrawTexturePro(m_texture.texture, m_source, m_destination, m_origin, 0.0f, WHITE);
+    }
+
+    void updateSize()
+    {
+
     }
 };
 
@@ -89,6 +102,8 @@ int main()
 
     RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
 
+    // OutputTexture mainTexture(5, 5);
+
     Rectangle sourceRect={0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height};
     Rectangle destRect  ={-ratio, -ratio, screenWidth + (ratio*2), screenHeight + (ratio*2) };
     Vector2 origin      ={0.0f, 0.0f};
@@ -114,7 +129,7 @@ int main()
         }
 
         BeginTextureMode(target);
-            ClearBackground(RAYWHITE);
+            ClearBackground(GREEN);
             for (unsigned int i{0}; i < sprites.size(); i++)
             {
                 sprites[i].draw();
