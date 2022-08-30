@@ -17,9 +17,17 @@ private:
     int m_ratio;
 
 public:
-    OutputTexture(int x, int y)
+    OutputTexture(int ratio)
     {
-        m_texture = LoadRenderTexture(x, y);
+        m_ratio = ratio;
+        unsigned int width = GetMonitorWidth(GetCurrentMonitor());
+        unsigned int height = GetMonitorHeight(GetCurrentMonitor());
+        m_texture = LoadRenderTexture(width / ratio, height / ratio);
+    }
+
+    RenderTexture2D getTexture()
+    {
+        return m_texture;
     }
 
     void draw()
@@ -88,10 +96,10 @@ public:
     }
 };
 
-int main() 
+int main()
 {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1920;
+    const int screenHeight = 1080;
 
     const float ratio = 8;
 
@@ -102,9 +110,11 @@ int main()
     InitWindow(screenWidth, screenHeight, "template");
     SetTargetFPS(300);
 
+    ToggleFullscreen();
+
     RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
 
-    // OutputTexture mainTexture(5, 5);
+    OutputTexture mainTexture(8);
 
     Rectangle sourceRect={0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height};
     Rectangle destRect  ={-ratio, -ratio, screenWidth + (ratio*2), screenHeight + (ratio*2) };
@@ -115,6 +125,7 @@ int main()
 
     while (!WindowShouldClose())
     {
+        // INPUT CHECK
         if (IsKeyPressed(KEY_SPACE))
         {
             sprites[0].move();
@@ -125,11 +136,13 @@ int main()
             SetWindowSize(GetScreenWidth(), GetScreenHeight());
         }
 
+        // UPDATE
         for (unsigned int i{0}; i < sprites.size(); i++)
         {
             sprites[i].update();
         }
 
+        // DRAW
         BeginTextureMode(target);
             ClearBackground(GREEN);
             for (unsigned int i{0}; i < sprites.size(); i++)
