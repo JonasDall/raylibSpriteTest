@@ -4,7 +4,7 @@
 
 #include "raylib.h"
 
-#define CYAN (Color){ 100, 255, 224, 255 };
+#define CYAN CLITERAL(Color){ 100, 255, 224, 255 }
 #define ANIM_FRAMERATE 12
 
 class OutputTexture
@@ -144,7 +144,7 @@ int main()
 
         // DRAW
         BeginTextureMode(target);
-            ClearBackground(GREEN);
+            ClearBackground((Color){100, 255, 224, 255});
             for (unsigned int i{0}; i < sprites.size(); i++)
             {
                 sprites[i].draw();
