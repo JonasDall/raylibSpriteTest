@@ -17,12 +17,11 @@ private:
     int m_ratio;
 
 public:
-    OutputTexture(int ratio)
+    OutputTexture(int texture_width, int texture_height)
     {
-        m_ratio = ratio;
         unsigned int width = GetMonitorWidth(GetCurrentMonitor());
-        unsigned int height = GetMonitorHeight(GetCurrentMonitor());
-        m_texture = LoadRenderTexture(width / ratio, height / ratio);
+        m_ratio = width / texture_width;
+        m_texture = LoadRenderTexture(texture_width, texture_height);
     }
 
     RenderTexture2D getTexture()
@@ -37,8 +36,9 @@ public:
 
     void updateSize()
     {
-        UnloadRenderTexture(m_texture);
-        m_texture = LoadRenderTexture(5, 5);
+        int width = GetMonitorWidth(GetCurrentMonitor());
+        int height = GetMonitorHeight(GetCurrentMonitor());
+
     }
 };
 
@@ -114,7 +114,7 @@ int main()
 
     RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
 
-    OutputTexture mainTexture(8);
+    OutputTexture mainTexture(virtualWidth, virtualHeight);
 
     Rectangle sourceRect={0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height};
     Rectangle destRect  ={-ratio, -ratio, screenWidth + (ratio*2), screenHeight + (ratio*2) };
@@ -143,7 +143,7 @@ int main()
         }
 
         // DRAW
-        BeginTextureMode(target);
+        BeginTextureMode(mainTexture.getTexture());
             ClearBackground((Color){100, 255, 224, 255});
             for (unsigned int i{0}; i < sprites.size(); i++)
             {
