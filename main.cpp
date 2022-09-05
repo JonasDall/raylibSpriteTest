@@ -14,17 +14,19 @@ private:
     Rectangle m_source;
     Rectangle m_destination;
     Vector2 m_origin;
-    int m_ratio;
+    int m_textureWidth;
+    int m_textureHeight;
 
 public:
-    OutputTexture(int texture_width, int texture_height)
+    OutputTexture(int texture_width, int texture_height) : m_textureWidth{texture_width}, m_textureHeight{texture_height}
     {
-        unsigned int width = GetMonitorWidth(GetCurrentMonitor());
-        unsigned int height = GetMonitorHeight(GetCurrentMonitor());
-        m_ratio = width / texture_width;
-        m_texture = LoadRenderTexture(texture_width, texture_height);
+        unsigned int width = GetScreenWidth();
+        unsigned int height = GetScreenHeight();
+        m_texture = LoadRenderTexture(m_textureWidth, m_textureHeight);
+        char *log;
+        TraceLog(LOG_ERROR, log);
         m_source = {0.0f, 0.0f, (float)m_texture.texture.width, -(float)m_texture.texture.height};
-        m_destination ={-(float)m_ratio, -(float)m_ratio, (float)width + (m_ratio*2), (float)height + (m_ratio*2) };
+        m_destination ={-0.0, -0.0, (float)width, (float)height};
     }
 
     RenderTexture2D getTexture()
@@ -41,6 +43,8 @@ public:
     {
         // int width = GetMonitorWidth(GetCurrentMonitor());
         // int height = GetMonitorHeight(GetCurrentMonitor());
+        // Rectangle destRect  ={-ratio, -ratio, screenWidth + (ratio*2), screenHeight + (ratio*2) };
+        // Vector2 origin      ={0.0f, 0.0f};
 
     }
 };
@@ -101,23 +105,11 @@ public:
 
 int main()
 {
-    const int screenWidth = 1920;
-    const int screenHeight = 1080;
-
-    const float ratio = 8;
-
-    const int virtualWidth = screenWidth / ratio;
-    const int virtualHeight = screenHeight / ratio;
-
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(screenWidth, screenHeight, "template");
+    InitWindow(1000, 500, "template");
     SetTargetFPS(300);
 
-    // ToggleFullscreen();
-
-    // RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
-
-    OutputTexture mainTexture(virtualWidth, virtualHeight);
+    OutputTexture mainTexture(320, 180);
 
     // Rectangle sourceRect={0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height};
     // Rectangle destRect  ={-ratio, -ratio, screenWidth + (ratio*2), screenHeight + (ratio*2) };
@@ -129,11 +121,6 @@ int main()
     while (!WindowShouldClose())
     {
         // INPUT CHECK
-        if (IsKeyPressed(KEY_SPACE))
-        {
-            sprites[0].move();
-        }
-
         if (IsWindowResized())
         {
             SetWindowSize(GetScreenWidth(), GetScreenHeight());
