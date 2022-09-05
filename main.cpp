@@ -20,8 +20,11 @@ public:
     OutputTexture(int texture_width, int texture_height)
     {
         unsigned int width = GetMonitorWidth(GetCurrentMonitor());
+        unsigned int height = GetMonitorHeight(GetCurrentMonitor());
         m_ratio = width / texture_width;
         m_texture = LoadRenderTexture(texture_width, texture_height);
+        m_source = {0.0f, 0.0f, (float)m_texture.texture.width, -(float)m_texture.texture.height};
+        m_destination ={-(float)m_ratio, -(float)m_ratio, (float)width + (m_ratio*2), (float)height + (m_ratio*2) };
     }
 
     RenderTexture2D getTexture()
@@ -36,8 +39,8 @@ public:
 
     void updateSize()
     {
-        int width = GetMonitorWidth(GetCurrentMonitor());
-        int height = GetMonitorHeight(GetCurrentMonitor());
+        // int width = GetMonitorWidth(GetCurrentMonitor());
+        // int height = GetMonitorHeight(GetCurrentMonitor());
 
     }
 };
@@ -110,15 +113,15 @@ int main()
     InitWindow(screenWidth, screenHeight, "template");
     SetTargetFPS(300);
 
-    ToggleFullscreen();
+    // ToggleFullscreen();
 
-    RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
+    // RenderTexture2D target = LoadRenderTexture(virtualWidth, virtualHeight);
 
     OutputTexture mainTexture(virtualWidth, virtualHeight);
 
-    Rectangle sourceRect={0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height};
-    Rectangle destRect  ={-ratio, -ratio, screenWidth + (ratio*2), screenHeight + (ratio*2) };
-    Vector2 origin      ={0.0f, 0.0f};
+    // Rectangle sourceRect={0.0f, 0.0f, (float)target.texture.width, -(float)target.texture.height};
+    // Rectangle destRect  ={-ratio, -ratio, screenWidth + (ratio*2), screenHeight + (ratio*2) };
+    // Vector2 origin      ={0.0f, 0.0f};
 
     std::vector<Sprite> sprites;
     sprites.push_back(Sprite("resources/skellyAttack.png"));
@@ -144,7 +147,7 @@ int main()
 
         // DRAW
         BeginTextureMode(mainTexture.getTexture());
-            ClearBackground((Color){100, 255, 224, 255});
+            ClearBackground(GREEN);
             for (unsigned int i{0}; i < sprites.size(); i++)
             {
                 sprites[i].draw();
@@ -154,7 +157,8 @@ int main()
 
         BeginDrawing();
             ClearBackground(RAYWHITE);
-            DrawTexturePro(target.texture, sourceRect, destRect, origin, 0.0f, WHITE);
+            // DrawTexturePro(target.texture, sourceRect, destRect, origin, 0.0f, WHITE);
+            mainTexture.draw();
         EndDrawing();
     }
 
