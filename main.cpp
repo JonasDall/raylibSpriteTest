@@ -23,10 +23,16 @@ public:
         unsigned int width = GetScreenWidth();
         unsigned int height = GetScreenHeight();
         m_texture = LoadRenderTexture(m_textureWidth, m_textureHeight);
-        char *log;
-        TraceLog(LOG_ERROR, log);
-        m_source = {0.0f, 0.0f, (float)m_texture.texture.width, -(float)m_texture.texture.height};
-        m_destination ={-0.0, -0.0, (float)width, (float)height};
+        float ratio = m_textureWidth / width;
+
+        m_source ={0.0f, 0.0f, (float)m_textureWidth, -(float)m_textureHeight};
+        m_destination ={-ratio, -ratio, width + (ratio*2), height + (ratio*2) };
+        m_origin ={0.0f, 0.0f};
+        
+        // char *log;
+        // TraceLog(LOG_ERROR, log);
+        // m_source = {0.0f, 0.0f, (float)m_texture.texture.width, -(float)m_texture.texture.height};
+        // m_destination ={-0.0, -0.0, (float)width, (float)height};
     }
 
     RenderTexture2D getTexture()
