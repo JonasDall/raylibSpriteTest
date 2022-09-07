@@ -7,6 +7,9 @@
 #define CYAN CLITERAL(Color){ 100, 255, 224, 255 }
 #define ANIM_FRAMERATE 12
 
+#define MAX(a, b) ((a)>(b)? (a) : (b))
+#define MIN(a, b) ((a)<(b)? (a) : (b))
+
 class OutputTexture
 {
 private:
@@ -23,16 +26,19 @@ public:
         unsigned int width = GetScreenWidth();
         unsigned int height = GetScreenHeight();
         m_texture = LoadRenderTexture(m_textureWidth, m_textureHeight);
-        float ratio = m_textureWidth / width;
+        // float ratio = m_textureWidth / width;
+
+        float scale = MIN((float)GetScreenWidth() / m_textureWidth, (float)GetScreenHeight() / m_textureHeight);
 
         m_source ={0.0f, 0.0f, (float)m_textureWidth, -(float)m_textureHeight};
-        m_destination ={-ratio, -ratio, width + (ratio*2), height + (ratio*2) };
+        m_destination ={((float)width - (float)m_textureWidth*scale)*0.5f, ((float)height - (float)m_textureHeight*scale)*0.5f, (float)width*scale, (float)height*scale};
+        // m_destination ={-ratio, -ratio, width + (ratio*2), height + (ratio*2) };
         m_origin ={0.0f, 0.0f};
-        
-        // char *log;
-        // TraceLog(LOG_ERROR, log);
-        // m_source = {0.0f, 0.0f, (float)m_texture.texture.width, -(float)m_texture.texture.height};
-        // m_destination ={-0.0, -0.0, (float)width, (float)height};
+    }
+
+    ~OutputTexture()
+    {
+        UnloadRenderTexture(m_texture);
     }
 
     RenderTexture2D getTexture()
@@ -47,11 +53,13 @@ public:
 
     void updateSize()
     {
-        // int width = GetMonitorWidth(GetCurrentMonitor());
-        // int height = GetMonitorHeight(GetCurrentMonitor());
-        // Rectangle destRect  ={-ratio, -ratio, screenWidth + (ratio*2), screenHeight + (ratio*2) };
-        // Vector2 origin      ={0.0f, 0.0f};
+        unsigned int width = GetScreenWidth();
+        unsigned int height = GetScreenHeight();
+        // float ratio = m_textureWidth / width;
+        float scale = MIN((float)GetScreenWidth() / m_textureWidth, (float)GetScreenHeight() / m_textureHeight);
 
+        // m_destination ={-ratio, -ratio, width + (ratio*2), height + (ratio*2) };
+        m_destination ={((float)width - (float)m_textureWidth*scale)*0.5f, ((float)height - (float)m_textureHeight*scale)*0.5f, (float)width*scale, (float)height*scale};
     }
 };
 
@@ -130,6 +138,7 @@ int main()
         if (IsWindowResized())
         {
             SetWindowSize(GetScreenWidth(), GetScreenHeight());
+            // mainTexture.updateSize();
         }
 
         // UPDATE
@@ -141,10 +150,13 @@ int main()
         // DRAW
         BeginTextureMode(mainTexture.getTexture());
             ClearBackground(GREEN);
+
+            /*
             for (unsigned int i{0}; i < sprites.size(); i++)
             {
                 sprites[i].draw();
             }
+            */
 
         EndTextureMode();
 
